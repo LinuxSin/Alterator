@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<html wf="none">
+<head>
+</head>
+<body>
+    <form method="POST" name="form_hosts" id="form_hosts">
+        <table width="100%">
+        <tr>
+            <td>
+                <label style="font-weight: bold;">Рабочий профиль:</label>
+                <select name="profiles"/>                
+            </td>
+            <td>
+                <input type="button" name="redact_prof" value="Редактировать профиль" class="btn" style="float: right;"/>
+            </td>
+        </tr>
+        </table>
+
+        <br/>
+        <hr/>
+        <br/> 
+
+        <table width="100%" class="alterator-listbox multi-select" name="hosts">
+            <thead>
+            <tr>
+                <th style="display: none;">Выбор</th>
+                <th>Процесс</th>
+                <th><span translate="_">Основной (IP:PORT)</span></th>
+                <th><span translate="_">Резервный (IP:PORT)</span></th>
+                <th><span translate="_">Состояние</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="display: none;"><span class="alterator-label" name="name"/></td>
+                <td>
+                    <span class="alterator-label" name="process_num"/>
+                    <span class="alterator-label" name="name" style="display:none"/>
+                </td>
+                <td><span class="alterator-label" name="primary"/></td>
+                <td><span class="alterator-label" name="secondary"/></td>
+                <td><span class="alterator-label" name="status"/></td>
+            </tr>
+            </tbody>
+        </table>
+        <br/>
+        <hr/>
+        <br/> 
+        <fieldset>
+            <legend><span translate="_" style="font-weight: bold;">Действия</span></legend>
+
+            <p><span translate="_">Выберите нужную строку таблицы профиля (checkbox)</span></p>
+
+            <p>
+                <input type="button" name="startBtn" value="&#9654;" class="btn"/>
+                <input type="text" class="text" name="start" value="&#9899; Запущен" style="display: none;"/>
+                <label><span translate="_">Запустить</span></label>
+                 <!--&#9898;  -->
+            </p>
+
+            <p>
+                <input type="button" name="stopBtn" value="&#9208;" class="btn"/>
+                <input type="text" class="text" name="stop" value="&#9898; Остановлен" style="display: none;"/>
+                <label><span translate="_">Остановить</span></label>
+            </p>
+
+            <p>
+                <input type="button" name="restartBtn" value="&#8634;" class="btn"/>
+                <input type="text" class="text" name="restart" value="Перзапускается" style="display: none;"/>
+                <label><span translate="_">Перезапустить</span></label>
+            </p>
+        </fieldset>
+        <br/>
+        <hr/>
+        <br/> 
+        <table width="100%">
+            <tr>
+                <td align="left">
+                    <span translate="_">New Data</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <hr />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span translate="_">New Status:</span>
+                    <input type="text" class="text" name="newdata"/>
+                    <input type="button" name="datadd" value="Create/Add" class="btn"/>
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>

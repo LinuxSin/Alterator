@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<html wf="none">
+  <body>
+    <form method="POST">
+        <table width="100%">
+        <tr>
+            <td>
+                <label style="font-weight: bold;">Рабочий профиль:</label>
+                <select name="profiles"/>
+                
+            </td>
+
+            <td>
+                <input type="button" name="return" value="Выйти из режима редактирования" class="btn" style="float: right;"/>
+            </td>
+        </tr>
+        </table>
+        <br/>
+        <hr/>
+        <br/> 
+
+        <table width="100%" class="alterator-listbox multi-select" name="hosts">
+            <thead>
+            <tr>
+                <th style="display: none;">Выбор</th>
+                <th>Процесс</th>
+                <th><span translate="_">Основной (IP:PORT)</span></th>
+                <th><span translate="_">Резервный (IP:PORT)</span></th>
+                <th><span translate="_">Состояние</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="display: none;"><span class="alterator-label" name="name"/></td>
+                <td>
+                    <span class="alterator-label" name="process_num"/>
+                    <span class="alterator-label" name="name" style="display:none"/>
+                </td>
+                <td><span class="alterator-label" name="primary"/></td>
+                <td><span class="alterator-label" name="secondary"/></td>
+                <td><span class="alterator-label" name="status"/></td>
+            </tr>
+            </tbody>
+        </table>
+        <br/>
+        <table width="100%">
+            <tr style="float: right;">
+                <td>
+                    <input type="button" name="addProc" value="Добавить процесс" class="btn"/> 
+                    <input type="button" name="delProc" value="Удалить процесс" class="btn"/> 
+                </td>
+            </tr>
+
+        </table>
+
+
+        <br/>
+        <hr/>
+        <br/> 
+
+        <fieldset>
+            <legend><span translate="_" style="font-weight: bold;">Редактировать профиль</span></legend>
+            <br/>
+            <!-- <p><span translate="_">Выберите нужную строку таблицы профиля (checkbox)</span></p> -->
+            <table width="100%">
+                <tr>
+                    <td>
+                        <span translate="_">Введите основной IP:</span>
+                        <input type="text" class="text" name="addPrimary" value="10.23.23.123:9595" placeholder="Введите основной IP"/>
+                        <p><input type="button" name="apply" value="Применить" class="btn"/></p>
+                    </td>
+                    <td>
+                        <span translate="_">Введите резервный IP:</span>
+                        <input type="text" class="text" name="addSecondary" value="localhost:10232" placeholder="Введите резервный IP"/>
+                        <p><input type="button" name="applySecondary" value="Применить" class="btn"/></p>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+
+
+         
+
+        <br/>
+        <hr/>
+        <br/> 
+
+        <fieldset>
+            <legend><span translate="_">Действия</span></legend>
+
+            <p><span translate="_">Выберите нужную строку таблицы профиля (checkbox)</span></p>
+
+            <p>
+                <input type="button" name="addProfile" value="Создать профиль" class="btn"/>               
+               
+            </p>
+
+
+        </fieldset>
+    </form>
+  </body>
+</html>
