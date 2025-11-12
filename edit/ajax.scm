@@ -27,7 +27,8 @@
 
 ; /////////////////////////////////////////////////////////////////////////////
 
-
+(define (ui-addProf-NewProfile)
+(form-replace "/m104/addProf"))
 
 (define (ui-return)
 (form-replace "/m104"))
@@ -119,4 +120,5 @@
 (form-bind "applySecondary" "click" ui-applySecondary)
 (form-bind "addProc" "click" ui-addProc)
 (form-bind "delProc" "click" ui-delProc)
+(form-bind "addNewProfile" "click" ui-addProf-NewProfile)
 )

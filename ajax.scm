@@ -9,8 +9,6 @@
   (woo-list "/m104/profiles"))
 
 ;; Функция для смены профиля
-;; Функция для смены профиля
-;; Функция для смены профиля
 (define (ui-change-profile)
   (catch/message
    (lambda()
