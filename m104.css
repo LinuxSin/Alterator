@@ -1,0 +1,11 @@
+caption {
+    background-color: white;
+    border: solid;
+    border-width: thin;
+    margin-bottom: 2px;
+    font-weight: 600;
+    height: 17px;
+    width: 274px;
+    text-align: -webkit-justify;
+    font-size: 15px;
+}
