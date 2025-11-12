@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
 <html wf="none">
 <head>
+    <link type="text/css" rel="stylesheet" href="/design/styles/alt_usb_guard.css" />
 </head>
 <body>
     <form method="POST" name="form_hosts" id="form_hosts">
@@ -8,7 +9,7 @@
         <tr>
             <td>
                 <label style="font-weight: bold;">Рабочий профиль:</label>
-                <select name="profiles"/>                
+                <select name="profiles"/>      
             </td>
             <td>
                 <input type="button" name="redact_prof" value="Редактировать профиль" class="btn" style="float: right;"/>
@@ -21,6 +22,7 @@
         <br/> 
 
         <table width="100%" class="alterator-listbox multi-select" name="hosts">
+            <caption><span class="alterator-label" name="title"/></caption>
             <thead>
             <tr>
                 <th style="display: none;">Выбор</th>

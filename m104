@@ -1,0 +1,379 @@
+#!/bin/sh 
+set -f
+
+alterator_api_version=1
+. alterator-sh-functions
+
+
+PROFILES_DIR="/home/test/m104"
+CURRENT_PROFILE_FILE="$PROFILES_DIR/current_profile"
+
+# Функция для получения текущего профиля
+get_current_profile() {
+    if [ -f "$CURRENT_PROFILE_FILE" ]; then
+        cat "$CURRENT_PROFILE_FILE"
+    else
+        echo "m104"  # профиль по умолчанию
+    fi
+}
+
+
+# Функция для получения пути к конфигурационному файлу текущего профиля
+get_config_file() {
+    local profile=$(get_current_profile)
+    echo "$PROFILES_DIR/$profile"
+}
+
+
+# Функция для установки профиля
+set_profile() {
+    local profile_name="$1"
+    if [ -f "$PROFILES_DIR/$profile_name" ]; then
+        echo "$profile_name" > "$CURRENT_PROFILE_FILE"
+        read_hosts_data >&3
+        # echo "success" >&3
+    else
+        echo "error: profile $profile_name not found" >&3
+    fi
+}
+
+
+# Функция для получения списка профилей
+list_profiles() {
+    find "$PROFILES_DIR" -maxdepth 1 -type f -not -name ".*" -exec basename {} \; | while read profile; do
+        # Пропускаем файл текущего профиля
+        if [ "$profile" != "current_profile" ]; then
+            printf '(name "%s" description "%s")\n' "$profile" "$profile"
+        fi
+    done
+}
+
+
+
+
+update_status() {
+    local process_num="$1"
+    local new_status="$2"
+    local config_file=$(get_config_file)
+    
+    # Создаем временный файл
+    local temp_file=$(mktemp)
+    
+    # Обрабатываем файл и обновляем статус для нужного процесса
+    awk -v proc="$process_num" -v newstat="$new_status" '
+    BEGIN { in_target = 0 }
+    /^process[[:space:]]*:[[:space:]]*/ {
+        current_process = $NF
+        if (current_process == proc) {
+            in_target = 1
+        } else {
+            in_target = 0
+        }
+    }
+    /^status[[:space:]]*:/ {
+        if (in_target) {
+            print "status\t: " newstat
+            next
+        }
+    }
+    { print }
+    ' "$config_file" > "$temp_file"
+    
+    # Заменяем оригинальный файл
+    mv "$temp_file" "$config_file"
+}
+
+update_status_start() {
+    local process_num="$1"
+    local new_status="$2"
+    local config_file=$(get_config_file)
+    
+    # Создаем временный файл
+    local temp_file=$(mktemp)
+    
+    # Обрабатываем файл и обновляем статус для нужного процесса
+    awk -v proc="$process_num" -v newstat="$new_status" '
+    BEGIN { in_target = 0 }
+    /^process[[:space:]]*:[[:space:]]*/ {
+        current_process = $NF
+        if (current_process == proc) {
+            in_target = 1
+        } else {
+            in_target = 0
+        }
+    }
+    /^status[[:space:]]*:/ {
+        if (in_target) {
+            print "status\t: " newstat
+            next
+        }
+    }
+    { print }
+    ' "$config_file" > "$temp_file"
+    
+    # Заменяем оригинальный файл
+    mv "$temp_file" "$config_file"
+}
+
+update_status_stop() {
+    local process_num="$1"
+    local new_status="$2"
+    local config_file=$(get_config_file)
+    
+    # Создаем временный файл
+    local temp_file=$(mktemp)
+    
+    # Обрабатываем файл и обновляем статус для нужного процесса
+    awk -v proc="$process_num" -v newstat="$new_status" '
+    BEGIN { in_target = 0 }
+    /^process[[:space:]]*:[[:space:]]*/ {
+        current_process = $NF
+        if (current_process == proc) {
+            in_target = 1
+        } else {
+            in_target = 0
+        }
+    }
+    /^status[[:space:]]*:/ {
+        if (in_target) {
+            print "status\t: " newstat
+            next
+        }
+    }
+    { print }
+    ' "$config_file" > "$temp_file"
+    
+    # Заменяем оригинальный файл
+    mv "$temp_file" "$config_file"
+}
+
+update_status_restart() {
+    local process_num="$1"
+    local new_status="$2"
+    local config_file=$(get_config_file)
+    
+    # Создаем временный файл
+    local temp_file=$(mktemp)
+    
+    # Обрабатываем файл и обновляем статус для нужного процесса
+    awk -v proc="$process_num" -v newstat="$new_status" '
+    BEGIN { in_target = 0 }
+    /^process[[:space:]]*:[[:space:]]*/ {
+        current_process = $NF
+        if (current_process == proc) {
+            in_target = 1
+        } else {
+            in_target = 0
+        }
+    }
+    /^status[[:space:]]*:/ {
+        if (in_target) {
+            print "status\t: " newstat
+            next
+        }
+    }
+    { print }
+    ' "$config_file" > "$temp_file"
+    
+    # Заменяем оригинальный файл
+    mv "$temp_file" "$config_file"
+}
+
+
+# кнопка "Применить" для редактирования профиля
+
+update_primary() {
+    local process_num="$1"
+    local new_primary="$2"
+    local config_file=$(get_config_file)
+    
+    # Создаем временный файл
+    local temp_file=$(mktemp)
+    
+    # Обрабатываем файл и обновляем primary для нужного процесса
+    awk -v proc="$process_num" -v newprimary="$new_primary" '
+    BEGIN { in_target = 0 }
+    /^process[[:space:]]*:[[:space:]]*/ {
+        current_process = $NF
+        if (current_process == proc) {
+            in_target = 1
+        } else {
+            in_target = 0
+        }
+    }
+    /^primary[[:space:]]*:/ {
+        if (in_target) {
+            # Очищаем поле primary и записываем только новые данные
+            print "primary\t: " newprimary
+            next
+        }
+    }
+    { print }
+    ' "$config_file" > "$temp_file"
+    
+    # Заменяем оригинальный файл
+    mv "$temp_file" "$config_file"
+}
+
+update_secondary() {
+    local process_num="$1"
+    local new_secondary="$2"
+    local config_file=$(get_config_file)
+    # Создаем временный файл
+    local temp_file=$(mktemp)
+    
+    # Обрабатываем файл и обновляем primary для нужного процесса
+    awk -v proc="$process_num" -v newsecondary="$new_secondary" '
+    BEGIN { in_target = 0 }
+    /^process[[:space:]]*:[[:space:]]*/ {
+        current_process = $NF
+        if (current_process == proc) {
+            in_target = 1
+        } else {
+            in_target = 0
+        }
+    }
+    /^secondary[[:space:]]*:/ {
+        if (in_target) {
+            # Очищаем поле secondary и записываем только новые данные
+            print "secondary\t: " newsecondary
+            next
+        }
+    }
+    { print }
+    ' "$config_file" > "$temp_file"
+    
+    # Заменяем оригинальный файл
+    mv "$temp_file" "$config_file"
+}
+
+
+add_new_process() {
+    local config_file=$(get_config_file)
+    
+    # Находим максимальный номер процесса
+    local max_process=$(awk '/^process[[:space:]]*:/ {print $NF}' "$config_file" | sort -n | tail -1)
+    local new_process=$((max_process + 1))
+    
+    # Добавляем новый процесс с ТАБОМ после названия поля (как в оригинале)
+    cat >> "$config_file" << EOF
+
+process	: $new_process
+primary	: 0.0.0.0:0000
+secondary	: Нет резерва
+status	: ⚪ Остановлен
+EOF
+    
+    echo "success" >&3
+}
+#\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ Удаление процесса \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+delete_process() {
+    local config_file=$(get_config_file)
+    local process_num="$1"
+    
+    # Создаем временный файл
+    local temp_file=$(mktemp)
+    
+    # Удаляем процесс и все его данные
+    awk -v proc="$process_num" '
+    BEGIN { in_target = 0; skip_section = 0 }
+    /^process[[:space:]]*:[[:space:]]*/ {
+        current_process = $NF
+        if (current_process == proc) {
+            skip_section = 1
+        } else {
+            skip_section = 0
+        }
+    }
+    {
+        if (!skip_section) {
+            print
+        }
+    }' "$config_file" > "$temp_file"
+    
+    # Заменяем оригинальный файл
+    mv "$temp_file" "$config_file"
+    
+    echo "success" >&3
+}
+
+
+
+# Функция для чтения данных хостов (обновленная)
+read_hosts_data() {
+    local config_file=$(get_config_file)
+    local profile_title=$(awk -F '\t: ' '/^title/ {print $2; exit}' "$config_file")
+    
+    # Если title не найден, используем имя профиля как заголовок
+    if [ -z "$profile_title" ]; then
+        profile_title="Профиль $(get_current_profile)"
+    fi
+    
+    awk -F '\t: ' -v title="$profile_title" '
+    BEGIN{n=0;}
+    function dump(){
+        if (primary!=""){
+            printf "(name \"%d\" process_num \"%d\" primary \"%s\" secondary \"%s\" status \"%s\" title \"%s\")\n",n,n,primary,secondary,status,title
+        }
+    }
+    function clean(){
+        primary=""; secondary=""; status="";
+    }
+    /^process/  {dump(); clean(); n=$2;}
+    /^primary/  {primary=$2;}
+    /^secondary/   {secondary=$2;}
+    /^status/   {status=$2;}
+    END{dump()}' < "$config_file"
+}
+
+on_message() {
+    case "$in_action" in
+        list)
+            case "$in__objects" in
+                profiles)
+                    list_profiles >&3
+                    ;;
+                hosts)
+                    read_hosts_data >&3
+                    ;;
+            esac
+            ;;
+        set_profile)
+            if [ -n "$in_profile_name" ]; then
+                set_profile "$in_profile_name"
+                # Возвращаем обновленный список хостов после смены профиля
+                read_hosts_data >&3
+            fi
+            ;;
+        add_process)
+            add_new_process
+            read_hosts_data >&3
+            ;;
+        delete_process)
+            if [ -n "$in_process_num" ]; then
+                delete_process "$in_process_num"
+                read_hosts_data >&3
+            fi
+            ;;    
+        update_status|update_status_start|update_status_stop|update_status_restart)
+            if [ -n "$in_process_num" ] && [ -n "$in_new_status" ]; then
+                update_status "$in_process_num" "$in_new_status"
+                echo "success" >&3
+            fi
+            ;;
+        update_primary)
+            if [ -n "$in_process_num" ] && [ -n "$in_new_primary" ]; then
+                update_primary "$in_process_num" "$in_new_primary"
+                echo "success" >&3
+            fi
+            ;;
+        update_secondary)
+            if [ -n "$in_process_num" ] && [ -n "$in_new_secondary" ]; then
+                update_secondary "$in_process_num" "$in_new_secondary"
+                echo "success" >&3
+            fi
+            ;;
+    esac
+}
+
+message_loop
