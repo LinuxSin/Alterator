@@ -297,6 +297,34 @@ delete_process() {
     echo "success" >&3
 }
 
+create_profile() {
+    local profile_name="$1"
+    local config_file="$PROFILES_DIR/$profile_name"
+    
+    # Проверяем, что имя профиля не пустое
+    if [ -z "$profile_name" ]; then
+        echo "error: profile name is empty" >&3
+        return 1
+    fi
+    
+    # Проверяем, что профиль еще не существует
+    if [ -f "$config_file" ]; then
+        echo "error: profile $profile_name already exists" >&3
+        return 1
+    fi
+    
+    # Создаем новый профиль с базовой структурой
+    cat > "$config_file" << EOF
+title	: Профиль $profile_name
+process	: 1
+primary	: 10.23.23.123:9595
+secondary	: localhost:10232
+status	: ⚫ Запущен
+EOF
+    
+    echo "success" >&3
+}
+
 
 
 # Функция для чтения данных хостов (обновленная)
@@ -343,6 +371,12 @@ on_message() {
                 set_profile "$in_profile_name"
                 # Возвращаем обновленный список хостов после смены профиля
                 read_hosts_data >&3
+            fi
+            ;;
+        create_profile)
+            if [ -n "$in_profile_name" ]; then
+                create_profile "$in_profile_name"
+                echo "success" >&3
             fi
             ;;
         add_process)
