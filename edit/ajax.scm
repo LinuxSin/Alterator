@@ -34,6 +34,18 @@
 (form-replace "/m104"))
 
 
+;; Функция для удаления текущего профиля
+;; Функция для удаления текущего профиля (упрощенная)
+(define (ui-delete-profile)
+  (catch/message
+   (lambda()
+     ;; Просто вызываем удаление текущего профиля без параметров
+     ;; Бэкенд сам определит какой профиль сейчас активен
+     (woo "delete_current_profile" "/m104")
+     ;; Возвращаемся на основную страницу
+     (form-replace "/m104/edit"))))
+
+
 (define (ui-apply)
   (catch/message
    (lambda()
@@ -121,4 +133,5 @@
 (form-bind "addProc" "click" ui-addProc)
 (form-bind "delProc" "click" ui-delProc)
 (form-bind "addNewProfile" "click" ui-addProf-NewProfile)
+(form-bind "deleteProfile" "click" ui-delete-profile)
 )

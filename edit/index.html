@@ -83,9 +83,14 @@
         <br/> 
 
         <fieldset>
-            <legend><span translate="_" style="font-weight: bold;">Действия</span></legend>
+            <legend><span translate="_" style="font-weight: bold;">Действия над профилем</span></legend>
             <!-- <p><span translate="_">Выберите нужную строку таблицы профиля (checkbox)</span></p> -->
-            <p><input type="button" name="addNewProfile" value="Создать профиль" class="btn"/></p>
+            <p>
+                <input type="button" name="addNewProfile" value="Создать профиль" class="btn"/>
+                <input type="button" name="deleteProfile" value="Удалить профиль" class="btn" style="background-color: brown;" onmouseover="this.style.backgroundColor='rgb(229, 103, 103)'" onmouseout="this.style.backgroundColor='brown'"/>
+            
+            </p>
+            
         </fieldset>
     </form>
   </body>

@@ -325,6 +325,31 @@ EOF
     echo "success" >&3
 }
 
+delete_current_profile() {
+    local current_profile=$(get_current_profile)
+    local config_file="$PROFILES_DIR/$current_profile"
+    
+    # Защита от удаления профиля по умолчанию
+    if [ "$current_profile" = "m104" ]; then
+        echo "error: cannot delete default profile m104" >&3
+        return 1
+    fi
+    
+    # Проверяем, что профиль существует
+    if [ ! -f "$config_file" ]; then
+        echo "error: current profile $current_profile does not exist" >&3
+        return 1
+    fi
+    
+    # Переключаемся на профиль по умолчанию
+    echo "m104" > "$CURRENT_PROFILE_FILE"
+    
+    # Удаляем файл профиля
+    rm -f "$config_file"
+    
+    echo "success" >&3
+}
+
 
 
 # Функция для чтения данных хостов (обновленная)
@@ -378,6 +403,10 @@ on_message() {
                 create_profile "$in_profile_name"
                 echo "success" >&3
             fi
+            ;;
+        delete_current_profile)
+                delete_current_profile
+                echo "success" >&3
             ;;
         add_process)
             add_new_process
