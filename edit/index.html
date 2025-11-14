@@ -59,7 +59,7 @@
         <br/> 
 
         <fieldset>
-            <legend><span translate="_" style="font-weight: bold;">Редактировать профиль</span></legend>
+            <legend><span translate="_" style="font-weight: bold;">Редактировать процессы</span></legend>
             <br/>
             <!-- <p><span translate="_">Выберите нужную строку таблицы профиля (checkbox)</span></p> -->
             <table width="100%">
@@ -85,12 +85,28 @@
         <fieldset>
             <legend><span translate="_" style="font-weight: bold;">Действия над профилем</span></legend>
             <!-- <p><span translate="_">Выберите нужную строку таблицы профиля (checkbox)</span></p> -->
-            <p>
-                <input type="button" name="addNewProfile" value="Создать профиль" class="btn"/>
-                <input type="button" name="deleteProfile" value="Удалить профиль" class="btn" style="background-color: brown;" onmouseover="this.style.backgroundColor='rgb(229, 103, 103)'" onmouseout="this.style.backgroundColor='brown'"/>
-            
-            </p>
-            
+            <!-- <p>
+                <input type="button" name="addNewProfile" value="Создать профиль" class="btn"/>            
+            </p> -->
+            <table>
+                <tr>
+                    <td>
+                        
+                        <input style="width: 200px;" type="text" class="text" name="new_profile_name" placeholder="Введите название нового профиля"/>  
+                        <input type="button" name="create_profile" value="Создать профиль" class="btn"/>                                            
+                    </td>                   
+                    <p><input type="button" name="deleteProfile" value="Удалить профиль" class="btn" style="float: right; background-color: brown;" onmouseover="this.style.backgroundColor='rgb(229, 103, 103)'" onmouseout="this.style.backgroundColor='brown'"/></p>
+                </tr>
+                <!-- <tr>
+                    <td>
+                        <label style="font-weight: bold;">Новый профиль: </label>
+                        <input style="width: 200px;" type="text" class="text" name="new_profile_name" placeholder="Введите название нового профиля"/>  
+                        <p><input type="button" name="create_profile" value="Создать профиль" class="btn"/></p>                                             
+                    </td>                   
+                    <p><input type="button" name="deleteProfile" value="Удалить профиль" class="btn" style="float: right; background-color: brown;" onmouseover="this.style.backgroundColor='rgb(229, 103, 103)'" onmouseout="this.style.backgroundColor='brown'"/></p>
+                </tr> -->
+
+            </table>            
         </fieldset>
     </form>
   </body>

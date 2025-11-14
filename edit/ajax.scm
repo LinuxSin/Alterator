@@ -33,6 +33,18 @@
 (define (ui-return)
 (form-replace "/m104"))
 
+;; ////////////////////////////// Создание нового профиля ///////////////////////////////
+(define (ui-create-profile)
+  (catch/message
+   (lambda()
+     (let ((new-profile-name (form-value "new_profile_name")))
+       (when (and new-profile-name (not (string-null? new-profile-name)))
+         ;; Вызываем метод создания профиля
+         (woo "create_profile" "/m104" 'profile_name new-profile-name)
+         ;; Устанавливаем новый профиль как текущий
+         (woo "set_profile" "/m104" 'profile_name new-profile-name)
+         ;; Возвращаемся к странице редактирования с уже выбранным новым профилем
+         (form-replace "/m104/edit"))))))
 
 ;; Функция для удаления текущего профиля
 ;; Функция для удаления текущего профиля (упрощенная)
@@ -134,4 +146,5 @@
 (form-bind "delProc" "click" ui-delProc)
 (form-bind "addNewProfile" "click" ui-addProf-NewProfile)
 (form-bind "deleteProfile" "click" ui-delete-profile)
+(form-bind "create_profile" "click" ui-create-profile)
 )
