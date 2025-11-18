@@ -8,10 +8,18 @@ alterator_api_version=1
 PROFILES_DIR="/home/test/m104"
 CURRENT_PROFILE_FILE="$PROFILES_DIR/current_profile"
 
+
 # Функция для получения текущего профиля
 get_current_profile() {
     if [ -f "$CURRENT_PROFILE_FILE" ]; then
-        cat "$CURRENT_PROFILE_FILE"
+        # Читаем файл и убираем все лишние символы
+        current_profile=$(cat "$CURRENT_PROFILE_FILE" | tr -d '\n\r\t ')
+        # Если после очистки строка пустая, используем значение по умолчанию
+        if [ -z "$current_profile" ]; then
+            echo "m104"
+        else
+            echo "$current_profile"
+        fi
     else
         echo "m104"  # профиль по умолчанию
     fi
@@ -29,9 +37,11 @@ get_config_file() {
 set_profile() {
     local profile_name="$1"
     if [ -f "$PROFILES_DIR/$profile_name" ]; then
+        # Записываем в файл и сразу проверяем
         echo "$profile_name" > "$CURRENT_PROFILE_FILE"
+        echo "DEBUG: Written to file: $profile_name" >&2
+        echo "DEBUG: File content: $(cat $CURRENT_PROFILE_FILE)" >&2
         read_hosts_data >&3
-        # echo "success" >&3
     else
         echo "error: profile $profile_name not found" >&3
     fi
@@ -390,6 +400,9 @@ on_message() {
                     read_hosts_data >&3
                     ;;
             esac
+            ;;
+        get_current_profile)
+            get_current_profile >&3
             ;;
         set_profile)
             if [ -n "$in_profile_name" ]; then

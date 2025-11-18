@@ -123,20 +123,33 @@
     (let ((profiles-list (get-profiles-list)))
       (form-update-enum "profiles" profiles-list)
       
-      ;; Пытаемся установить m104 как выбранный, если он есть в списке
-      (if (member "m104" (map (lambda (x) (woo-get-option x 'name)) profiles-list))
-          (form-update-value "profiles" "m104")
-          ;; Иначе выбираем первый элемент
-          (when (not (null? profiles-list))
-            (form-update-value "profiles" (woo-get-option (car profiles-list) 'name))))
-      
-      ;; Загружаем данные хостов и обновляем заголовок
+      ;; Загружаем данные хостов чтобы определить текущий профиль
       (let ((hosts-data (woo-list "/m104/hosts")))
         (form-update-enum "hosts" hosts-data)
-        ;; Устанавливаем заголовок из первого элемента (если есть)
-        (when (not (null? hosts-data))
-          (let ((first-host (car hosts-data)))
-            (form-update-value "title" (woo-get-option first-host 'title))))))))
+        
+        ;; Определяем текущий профиль из заголовка
+        (let ((current-profile 
+               (if (not (null? hosts-data))
+                   (let ((first-host (car hosts-data)))
+                     (let ((title (woo-get-option first-host 'title)))
+                       ;; Извлекаем имя профиля из заголовка "Профиль m9"
+                       (if (string-contains title "Профиль ")
+                           (let ((parts (string-split title #\space)))
+                             (if (> (length parts) 1)
+                                 (list-ref parts 1)
+                                 "m104"))
+                           "m104")))
+                   "m104")))
+          
+          (display "DEBUG: Current profile from title: ") (display current-profile) (newline)
+          
+          ;; Устанавливаем текущий профиль в выпадающем списке
+          (form-update-value "profiles" current-profile)
+          
+          ;; Устанавливаем заголовок
+          (when (not (null? hosts-data))
+            (let ((first-host (car hosts-data)))
+              (form-update-value "title" (woo-get-option first-host 'title)))))))))
 ;; (ui-init)
 (form-bind "profiles" "click" ui-change-profile)
 (form-bind "return" "click" ui-return)
