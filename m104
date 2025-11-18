@@ -281,31 +281,87 @@ delete_process() {
     local config_file=$(get_config_file)
     local process_num="$1"
     
-    # Создаем временный файл
     local temp_file=$(mktemp)
     
-    # Удаляем процесс и все его данные
-    awk -v proc="$process_num" '
-    BEGIN { in_target = 0; skip_section = 0 }
-    /^process[[:space:]]*:[[:space:]]*/ {
-        current_process = $NF
-        if (current_process == proc) {
-            skip_section = 1
-        } else {
-            skip_section = 0
+    # Преобразуем process_num в массив (может содержать несколько процессов через разделитель)
+    local IFS=';'
+    local processes_to_delete=($process_num)
+    unset IFS
+    
+    awk -v delete_procs="${processes_to_delete[*]}" '
+    BEGIN {
+        new_num = 0
+        block = ""
+        in_block = 0
+        
+        # Создаем массив процессов для удаления
+        split(delete_procs, delete_arr, " ")
+        for (i in delete_arr) {
+            to_delete[delete_arr[i]] = 1
         }
     }
+    
+    # Заголовок профиля
+    /^title[[:space:]]*:/ {
+        print
+        next
+    }
+    
+    # Начало блока процесса
+    /^process[[:space:]]*:[[:space:]]*/ {
+        # Сохраняем предыдущий блок если он есть
+        if (block != "") {
+            if (!(current_proc in to_delete)) {
+                new_num++
+                print "process\t: " new_num
+                printf "%s", block
+            }
+            block = ""
+        }
+        
+        current_proc = $NF
+        in_block = 1
+        next
+    }
+    
+    # Данные внутри блока процесса
     {
-        if (!skip_section) {
-            print
+        if (in_block) {
+            block = block $0 "\n"
+        }
+    }
+    
+    # Пустая строка - конец блока
+    /^$/ {
+        if (block != "") {
+            if (!(current_proc in to_delete)) {
+                new_num++
+                print "process\t: " new_num
+                printf "%s", block
+            }
+            block = ""
+            print ""
+        }
+        in_block = 0
+        next
+    }
+    
+    END {
+        # Последний блок
+        if (block != "" && !(current_proc in to_delete)) {
+            new_num++
+            print "process\t: " new_num
+            printf "%s", block
         }
     }' "$config_file" > "$temp_file"
     
-    # Заменяем оригинальный файл
     mv "$temp_file" "$config_file"
-    
     echo "success" >&3
 }
+
+
+
+
 
 create_profile() {
     local profile_name="$1"

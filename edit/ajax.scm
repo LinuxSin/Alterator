@@ -107,12 +107,10 @@
    (lambda()
      (let ((selected-processes (form-value "hosts")))
        (when selected-processes
-         (let ((process-list (string-split selected-processes #\;)))
-           (for-each
-            (lambda (process-num)
-              (woo "delete_process" "/m104" 
-                   'process_num process-num))
-            process-list)
+         ;; Передаем все выбранные процессы одним вызовом, объединяя через ";"
+         (let ((processes-string (string-join (string-split selected-processes #\;) " ")))
+           (woo "delete_process" "/m104" 
+                'process_num processes-string)
            ;; Обновляем таблицу после удаления
            (form-update-enum "hosts"
              (woo-list "/m104/hosts"))))))))
