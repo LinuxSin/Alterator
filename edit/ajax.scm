@@ -41,13 +41,18 @@
        (when (and new-profile-name (not (string-null? new-profile-name)))
          ;; Вызываем метод создания профиля
          (woo "create_profile" "/m104" 'profile_name new-profile-name)
-         ;; Устанавливаем новый профиль как текущий
-         (woo "set_profile" "/m104" 'profile_name new-profile-name)
-         ;; Возвращаемся к странице редактирования с уже выбранным новым профилем
-         (form-replace "/m104/edit"))))))
+         ;; Обновляем список профилей
+         (let ((profiles-list (get-profiles-list)))
+           (form-update-enum "profiles" profiles-list)
+           (form-update-value "profiles" new-profile-name))
+         ;; Обновляем таблицу
+         (let ((hosts-data (woo-list "/m104/hosts")))
+           (form-update-enum "hosts" hosts-data)
+           (when (not (null? hosts-data))
+             (let ((first-host (car hosts-data)))
+               (form-update-value "title" (woo-get-option first-host 'title))))))))))
 
 ;; Функция для удаления текущего профиля
-;; Функция для удаления текущего профиля (упрощенная)
 (define (ui-delete-profile)
   (catch/message
    (lambda()
@@ -119,27 +124,29 @@
   (catch/message (lambda ()
     ;; Загружаем список профилей
     (let ((profiles-list (get-profiles-list)))
+      (display "DEBUG: Profiles list: ") (display profiles-list) (newline)
       (form-update-enum "profiles" profiles-list)
       
       ;; Загружаем данные хостов чтобы определить текущий профиль
       (let ((hosts-data (woo-list "/m104/hosts")))
+        (display "DEBUG: Hosts data: ") (display hosts-data) (newline)
         (form-update-enum "hosts" hosts-data)
         
-        ;; Определяем текущий профиль из заголовка
+        ;; Определяем текущий профиль
         (let ((current-profile 
                (if (not (null? hosts-data))
                    (let ((first-host (car hosts-data)))
                      (let ((title (woo-get-option first-host 'title)))
-                       ;; Извлекаем имя профиля из заголовка "Профиль m9"
+                       ;; Извлекаем имя профиля из заголовка
                        (if (string-contains title "Профиль ")
                            (let ((parts (string-split title #\space)))
                              (if (> (length parts) 1)
-                                 (list-ref parts 1)
+                                 (string-join (cdr parts) " ") ; Берем все части после "Профиль"
                                  "m104"))
                            "m104")))
                    "m104")))
           
-          (display "DEBUG: Current profile from title: ") (display current-profile) (newline)
+          (display "DEBUG: Current profile from title: '") (display current-profile) (display "'") (newline)
           
           ;; Устанавливаем текущий профиль в выпадающем списке
           (form-update-value "profiles" current-profile)

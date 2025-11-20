@@ -12,8 +12,8 @@ CURRENT_PROFILE_FILE="$PROFILES_DIR/current_profile"
 # Функция для получения текущего профиля
 get_current_profile() {
     if [ -f "$CURRENT_PROFILE_FILE" ]; then
-        # Читаем файл и убираем все лишние символы
-        current_profile=$(cat "$CURRENT_PROFILE_FILE" | tr -d '\n\r\t ')
+        # Читаем файл, убираем только переводы строк, но сохраняем пробелы
+        current_profile=$(cat "$CURRENT_PROFILE_FILE" | tr -d '\n\r\t')
         # Если после очистки строка пустая, используем значение по умолчанию
         if [ -z "$current_profile" ]; then
             echo "m104"
@@ -36,14 +36,20 @@ get_config_file() {
 # Функция для установки профиля
 set_profile() {
     local profile_name="$1"
-    if [ -f "$PROFILES_DIR/$profile_name" ]; then
+    local config_file="$PROFILES_DIR/$profile_name"
+    
+    # Проверяем существование файла профиля
+    if [ -f "$config_file" ]; then
         # Записываем в файл и сразу проверяем
         echo "$profile_name" > "$CURRENT_PROFILE_FILE"
         echo "DEBUG: Written to file: $profile_name" >&2
         echo "DEBUG: File content: $(cat $CURRENT_PROFILE_FILE)" >&2
         read_hosts_data >&3
     else
-        echo "error: profile $profile_name not found" >&3
+        echo "error: profile file $config_file not found" >&3
+        # Если профиль не найден, возвращаемся к профилю по умолчанию
+        echo "m104" > "$CURRENT_PROFILE_FILE"
+        read_hosts_data >&3
     fi
 }
 
@@ -387,6 +393,9 @@ primary	: 10.23.23.123:9595
 secondary	: localhost:10232
 status	: ⚫ Запущен
 EOF
+    
+    # Немедленно устанавливаем созданный профиль как текущий
+    echo "$profile_name" > "$CURRENT_PROFILE_FILE"
     
     echo "success" >&3
 }
