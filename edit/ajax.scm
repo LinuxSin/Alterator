@@ -120,6 +120,21 @@
            (form-update-enum "hosts"
              (woo-list "/m104/hosts"))))))))
 
+
+
+;; Функция для показа формы "Сохранить как"
+(define (ui-show-save-as)
+  (form-update-visibility '("saveAsForm") #t))
+
+;; Функция для скрытия формы "Сохранить как"
+(define (ui-hide-save-as)
+  (form-update-visibility '("saveAsForm") #f))
+
+
+
+
+
+
 (define (init)
   (catch/message (lambda ()
     ;; Загружаем список профилей
@@ -165,4 +180,6 @@
 (form-bind "addNewProfile" "click" ui-addProf-NewProfile)
 (form-bind "deleteProfile" "click" ui-delete-profile)
 (form-bind "create_profile" "click" ui-create-profile)
+(form-bind "save_as" "click" ui-show-save-as)
+(form-bind "cancellation_save" "click" ui-hide-save-as)
 )
