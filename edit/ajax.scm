@@ -129,10 +129,22 @@
 ;; Функция для скрытия формы "Сохранить как"
 (define (ui-hide-save-as)
   (form-update-visibility '("saveAsForm") #f))
+;; /////// форма для создания нового профиля ///////
+(define (ui-show-profileform-as)
+(form-update-visibility '("addNewProfiles") #t))
+
+(define (ui-hide-add-as)
+  (form-update-visibility '("addNewProfiles") #f))
 
 
+(define (ui-show-save-as-and-hide-add-as)
+  (ui-show-save-as)
+  (ui-hide-add-as))
 
-
+(define (ui-show-profileform-as-ui-hide-save-as)
+  (ui-show-profileform-as)
+  (ui-hide-save-as)
+)
 
 
 (define (init)
@@ -180,6 +192,10 @@
 (form-bind "addNewProfile" "click" ui-addProf-NewProfile)
 (form-bind "deleteProfile" "click" ui-delete-profile)
 (form-bind "create_profile" "click" ui-create-profile)
-(form-bind "save_as" "click" ui-show-save-as)
+(form-bind "save_as" "click" ui-show-save-as-and-hide-add-as)
 (form-bind "cancellation_save" "click" ui-hide-save-as)
+
+(form-bind "cancellation_newprofiles" "click" ui-hide-add-as)
+
+(form-bind "AddNewProf" "click" ui-show-profileform-as-ui-hide-save-as)
 )
