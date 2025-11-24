@@ -145,7 +145,11 @@
   (ui-show-profileform-as)
   (ui-hide-save-as)
 )
-
+;;////// скрывать поле профиля после нажатия на кнопку "создать"
+(define (ui-create-profile-ui-hide-add-as)
+  (ui-create-profile)
+  (ui-hide-add-as)
+)
 
 (define (init)
   (catch/message (lambda ()
@@ -191,7 +195,7 @@
 (form-bind "delProc" "click" ui-delProc)
 (form-bind "addNewProfile" "click" ui-addProf-NewProfile)
 (form-bind "deleteProfile" "click" ui-delete-profile)
-(form-bind "create_profile" "click" ui-create-profile)
+(form-bind "create_profile" "click" ui-create-profile-ui-hide-add-as)
 (form-bind "save_as" "click" ui-show-save-as-and-hide-add-as)
 (form-bind "cancellation_save" "click" ui-hide-save-as)
 

@@ -89,38 +89,40 @@
 
         <fieldset>
             <legend><span translate="_" style="font-weight: bold;">Действия над профилем</span></legend>
-            <!-- <p><span translate="_">Выберите нужную строку таблицы профиля (checkbox)</span></p> -->
-            <!-- <p>
-                <input type="button" name="addNewProfile" value="Создать профиль" class="btn"/>            
-            </p> -->
             <table>
                 <tr>
-                    <td>                        
+                    <!-- <td>                        
                         <input style="width: 200px;" type="text" class="text" name="new_profile_name" placeholder="Введите название нового профиля"/>  
                         <input type="button" name="create_profile" value="Создать" class="btn"/>                                            
-                    </td>
-                                      
+                    </td> -->                                      
                     <p><input type="button" name="deleteProfile" value="Удалить профиль" class="btn" style="float: right; background-color: brown;" onmouseover="this.style.backgroundColor='rgb(229, 103, 103)'" onmouseout="this.style.backgroundColor='brown'"/></p>
                     <p><input type="button" name="save_as" value="Сохранить как" class="btn"  style="float: right;"/></p>
                     <p><input type="button" name="AddNewProf" value="Создать профиль" class="btn"  style="float: right;"/></p>                     
                 </tr>
-                <!-- <tr>
-                    <td>
-                        <label style="font-weight: bold;">Новый профиль: </label>
-                        <input style="width: 200px;" type="text" class="text" name="new_profile_name" placeholder="Введите название нового профиля"/>  
-                        <p><input type="button" name="create_profile" value="Создать профиль" class="btn"/></p>                                             
-                    </td>                   
-                    <p><input type="button" name="deleteProfile" value="Удалить профиль" class="btn" style="float: right; background-color: brown;" onmouseover="this.style.backgroundColor='rgb(229, 103, 103)'" onmouseout="this.style.backgroundColor='brown'"/></p>
-                </tr> -->
-
             </table>            
         </fieldset>
 
-<!-- <input type="hidden" name="saveAsForm_visible" value="false"/> -->
+
 
         <fieldset name="addNewProfiles" style="display: none;">
             <legend><span style="font-weight: bold;">Создание нового профиля</span></legend>
-            <p><input type="button" name="cancellation_newprofiles" value="отмена" class="btn" style="float: right;"/></p>
+            <table>
+                <tr>
+                    <td style="padding-bottom: 20px; padding-top: 10px;">
+                        <span>Новый профиль:</span>
+                        <input style="width: 200px;" type="text" class="text" name="new_profile_name" placeholder="Введите название нового профиля"/>                        
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <input type="button" name="create_profile" value="Создать" class="btn"/>
+                        <input type="button" name="cancellation_newprofiles" value="отмена" class="btn"/>
+                    </td>
+                </tr>
+
+            </table>
+
 
         </fieldset>    
 
@@ -135,36 +137,9 @@
                 </tr>
             </table>
         </fieldset>
-<br/>
-<hr/>
-<br/>
-
-<!-- Новая редактируемая таблица -->
-<!-- <fieldset>
-    <legend><span translate="_" style="font-weight: bold;">Редактирование процессов (прямое)</span></legend>
-    
-    <table width="100%" class="alterator-listbox" name="editable_hosts" id="editable_hosts">
-        <caption><span>Прямое редактирование</span></caption>
-        <thead>
-            <tr>
-                <th>Процесс</th>
-                <th>Основной (IP:PORT)</th>
-                <th>Резервный (IP:PORT)</th>
-                <th>Состояние</th>
-                <th>Действия</th>
-            </tr>
-        </thead>
-        <tbody id="editable_hosts_body">
-           
-        </tbody>
-    </table>
-    
-    <div style="margin-top: 10px;">
-        <input type="button" name="add_editable_row" value="+ Добавить процесс" class="btn"/>
-        <input type="button" name="save_editable_table" value="💾 Сохранить все изменения" class="btn" style="float: right;"/>
-    </div>
-</fieldset> -->
-
+        <br/>
+        <hr/>
+        <br/>
         
     </form>
   </body>
