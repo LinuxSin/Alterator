@@ -151,6 +151,50 @@
   (ui-hide-add-as)
 )
 
+;;///////////////// форма для "Сохранить как"  //////////////////////////
+; (define (ui-checkbox-prof)
+;   (form-update-visibility '("profile_selection") #t)
+; )
+
+; (define (ui-savenewprof)
+;   (form-update-visibility '("SaveNewProf") #f)
+; )
+
+; (define (ui-checkbox-prof-ui-savenewprof)
+;   (ui-checkbox-prof)
+;   (ui-savenewprof)
+; )
+
+;;///////////////// форма для "Сохранить как"  //////////////////////////
+(define (ui-toggle-checkbox)
+  (catch/message
+   (lambda()
+     (let ((checkbox-state (form-value "checkbox_prof")))
+       (if (and checkbox-state (string=? checkbox-state "on"))
+           ;; Если чекбокс отмечен - показываем выбор профиля, скрываем создание нового
+           (begin
+             (form-update-visibility '("profile_selection") #t)
+             (form-update-visibility '("SaveNewProf") #f))
+           ;; Если чекбокс не отмечен - показываем создание нового, скрываем выбор профиля
+           (begin
+             (form-update-visibility '("profile_selection") #f)
+             (form-update-visibility '("SaveNewProf") #t)))))))
+
+;; Функция для показа формы "Сохранить как" с начальными настройками
+(define (ui-show-save-as)
+  (catch/message
+   (lambda()
+     ;; Сбрасываем чекбокс
+     (form-update-value "checkbox_prof" #f)
+     ;; Показываем форму создания нового профиля
+     (form-update-visibility '("SaveNewProf") #t)
+     ;; Скрываем выбор существующего профиля
+     (form-update-visibility '("profile_selection") #f)
+     ;; Показываем основную форму
+     (form-update-visibility '("saveAsForm") #t))))
+
+;; ... остальной код без изменений ...
+
 (define (init)
   (catch/message (lambda ()
     ;; Загружаем список профилей
@@ -202,4 +246,8 @@
 (form-bind "cancellation_newprofiles" "click" ui-hide-add-as)
 
 (form-bind "AddNewProf" "click" ui-show-profileform-as-ui-hide-save-as)
+
+
+; (form-bind "checkbox_prof" "change" ui-checkbox-prof-ui-savenewprof)
+(form-bind "checkbox_prof" "change" ui-toggle-checkbox)
 )
