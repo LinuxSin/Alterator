@@ -426,6 +426,43 @@ delete_current_profile() {
 }
 
 
+save_profile_as() {
+    local new_profile_name="$1"
+    local current_profile=$(get_current_profile)
+    local current_config_file="$PROFILES_DIR/$current_profile"
+    local new_config_file="$PROFILES_DIR/$new_profile_name"
+    
+    # Проверяем, что имя профиля не пустое
+    if [ -z "$new_profile_name" ]; then
+        echo "error: new profile name is empty" >&3
+        return 1
+    fi
+    
+    # Проверяем, что профиль еще не существует
+    if [ -f "$new_config_file" ]; then
+        echo "error: profile $new_profile_name already exists" >&3
+        return 1
+    fi
+    
+    # Проверяем, что текущий профиль существует
+    if [ ! -f "$current_config_file" ]; then
+        echo "error: current profile $current_profile does not exist" >&3
+        return 1
+    fi
+    
+    # Копируем содержимое текущего профиля в новый профиль
+    cp "$current_config_file" "$new_config_file"
+    
+    # Обновляем заголовок в новом профиле
+    sed -i "s/^title\t:.*/title\t: Профиль $new_profile_name/" "$new_config_file"
+    
+    # Устанавливаем новый профиль как текущий
+    echo "$new_profile_name" > "$CURRENT_PROFILE_FILE"
+    
+    echo "success" >&3
+}
+
+
 
 # Функция для чтения данных хостов (обновленная)
 read_hosts_data() {
@@ -465,6 +502,13 @@ on_message() {
                     read_hosts_data >&3
                     ;;
             esac
+            ;;
+        save_profile_as)
+            if [ -n "$in_new_profile_name" ]; then
+                save_profile_as "$in_new_profile_name"
+                # Возвращаем обновленный список хостов
+                read_hosts_data >&3
+            fi
             ;;
         get_current_profile)
             get_current_profile >&3

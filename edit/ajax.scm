@@ -193,7 +193,30 @@
      ;; Показываем основную форму
      (form-update-visibility '("saveAsForm") #t))))
 
-;; ... остальной код без изменений ...
+
+;; Функция для сохранения текущего профиля как нового
+(define (ui-save-as-create)
+  (catch/message
+   (lambda()
+     (let ((new-profile-name (form-value "save_as_new_name")))
+       (when (and new-profile-name (not (string-null? new-profile-name)))
+         ;; Вызываем метод сохранения как
+         (woo "save_profile_as" "/m104" 'new_profile_name new-profile-name)
+         ;; Обновляем список профилей
+         (let ((profiles-list (get-profiles-list)))
+           (form-update-enum "profiles" profiles-list)
+           (form-update-value "profiles" new-profile-name))
+         ;; Обновляем таблицу
+         (let ((hosts-data (woo-list "/m104/hosts")))
+           (form-update-enum "hosts" hosts-data)
+           (when (not (null? hosts-data))
+             (let ((first-host (car hosts-data)))
+               (form-update-value "title" (woo-get-option first-host 'title)))))
+         ;; Скрываем форму после успешного сохранения
+         (ui-hide-save-as))))))
+
+
+
 
 (define (init)
   (catch/message (lambda ()
@@ -250,4 +273,5 @@
 
 ; (form-bind "checkbox_prof" "change" ui-checkbox-prof-ui-savenewprof)
 (form-bind "checkbox_prof" "change" ui-toggle-checkbox)
+(form-bind "save_as_create" "click" ui-save-as-create)
 )
