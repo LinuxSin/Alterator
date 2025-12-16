@@ -116,8 +116,8 @@
                 
                 <tr>
                     <td>
-                        <input type="button" name="create_profile" value="Создать" class="btn"/>
                         <input type="button" name="cancellation_newprofiles" value="отмена" class="btn"/>
+                        <input type="button" name="create_profile" value="Создать" class="btn"/>                        
                     </td>
                 </tr>
 
@@ -130,10 +130,22 @@
             <legend><span translate="_" style="font-weight: bold;">Сохранить профиль как</span></legend>
             <table>
                 <tr>
-                    <td>
-                        
+                    <td style="padding-bottom: 20px; padding-top: 10px;">
+                        <span>Использовать существующий профиль:</span>
+                        <input type="checkbox" name="" value=""/>                        
                     </td>
-                    <p><input type="button" name="cancellation_save" value="отмена" class="btn" style="float: right;"/></p>
+                </tr>
+                <tr>
+                    <td style="padding-bottom: 20px; padding-top: 10px;">
+                        <span>Новый профиль:</span>
+                        <input style="width: 200px;" type="text" class="text" name="" placeholder="Введите название нового профиля"/>                        
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="button" name="cancellation_save" value="отмена" class="btn"/>
+                        <input type="button" name="" value="Создать" class="btn"/>                        
+                    </td>
                 </tr>
             </table>
         </fieldset>
