@@ -462,7 +462,39 @@ save_profile_as() {
     echo "success" >&3
 }
 
-
+# Функция для копирования данных текущего профиля в другой профиль
+copy_to_profile() {
+    local target_profile="$1"
+    local current_profile=$(get_current_profile)
+    local current_config_file="$PROFILES_DIR/$current_profile"
+    local target_config_file="$PROFILES_DIR/$target_profile"
+    
+    # Проверяем, что целевой профиль существует
+    if [ ! -f "$target_config_file" ]; then
+        echo "error: target profile $target_profile does not exist" >&3
+        return 1
+    fi
+    
+    # Проверяем, что текущий профиль существует
+    if [ ! -f "$current_config_file" ]; then
+        echo "error: current profile $current_profile does not exist" >&3
+        return 1
+    fi
+    
+    # Проверяем, что не пытаемся скопировать в тот же профиль
+    if [ "$current_profile" = "$target_profile" ]; then
+        echo "error: cannot copy to the same profile" >&3
+        return 1
+    fi
+    
+    # Копируем содержимое текущего профиля в целевой профиль
+    cp "$current_config_file" "$target_config_file"
+    
+    # Обновляем заголовок в целевом профиле (если нужно)
+    sed -i "s/^title\t:.*/title\t: Профиль $target_profile/" "$target_config_file"
+    
+    echo "success" >&3
+}
 
 # Функция для чтения данных хостов (обновленная)
 read_hosts_data() {
@@ -503,6 +535,12 @@ on_message() {
                     ;;
             esac
             ;;
+        copy_to_profile)
+            if [ -n "$in_target_profile" ]; then
+                copy_to_profile "$in_target_profile"
+                echo "success" >&3
+            fi
+            ;;    
         save_profile_as)
             if [ -n "$in_new_profile_name" ]; then
                 save_profile_as "$in_new_profile_name"

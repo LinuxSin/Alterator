@@ -9,6 +9,26 @@
 (define (get-profiles-list)
   (woo-list "/m104/profiles"))
 
+;; Новая функция для загрузки списка профилей в выпадающий список
+(define (load-target-profiles-list)
+  (catch/message
+   (lambda()
+     (let ((profiles-list (get-profiles-list)))
+       ;; Загружаем список профилей в выпадающий список
+       (form-update-enum "target_profiles" profiles-list)))))
+
+;; Функция для копирования данных в выбранный профиль
+(define (ui-copy-to-profile)
+  (catch/message
+   (lambda()
+     (let ((target-profile (form-value "target_profiles")))
+       (when target-profile
+         ;; Вызываем метод копирования данных в выбранный профиль
+         (woo "copy_to_profile" "/m104" 'target_profile target-profile)
+         ;; НЕ ОБНОВЛЯЕМ СПИСОК ПРОФИЛЕЙ - они не изменились
+         ;; Скрываем форму
+         (ui-hide-save-as))))))
+
 ;; Функция для смены профиля
 (define (ui-change-profile)
   (catch/message
@@ -37,15 +57,17 @@
 (define (ui-create-profile)
   (catch/message
    (lambda()
-     (let ((new-profile-name (form-value "new_profile_name")))
+     (let ((new-profile-name (form-value "new_profile_name"))
+           (current-profile (form-value "profiles")))  ;; Сохраняем текущий профиль
        (when (and new-profile-name (not (string-null? new-profile-name)))
          ;; Вызываем метод создания профиля
          (woo "create_profile" "/m104" 'profile_name new-profile-name)
          ;; Обновляем список профилей
          (let ((profiles-list (get-profiles-list)))
            (form-update-enum "profiles" profiles-list)
-           (form-update-value "profiles" new-profile-name))
-         ;; Обновляем таблицу
+           ;; ВОЗВРАЩАЕМ ТЕКУЩИЙ ПРОФИЛЬ КАК ВЫБРАННЫЙ (не переключаемся на новый)
+           (form-update-value "profiles" current-profile))
+         ;; Обновляем таблицу (она должна остаться с текущим профилем)
          (let ((hosts-data (woo-list "/m104/hosts")))
            (form-update-enum "hosts" hosts-data)
            (when (not (null? hosts-data))
@@ -122,10 +144,6 @@
 
 
 
-;; Функция для показа формы "Сохранить как"
-(define (ui-show-save-as)
-  (form-update-visibility '("saveAsForm") #t))
-
 ;; Функция для скрытия формы "Сохранить как"
 (define (ui-hide-save-as)
   (form-update-visibility '("saveAsForm") #f))
@@ -160,18 +178,19 @@
        (if (and checkbox-state (string=? checkbox-state "on"))
            ;; Если чекбокс отмечен - показываем выбор профиля, скрываем создание нового
            (begin
+             ;; Загружаем список профилей в выпадающий список
+             (load-target-profiles-list)
              (form-update-visibility '("profile_selection") #t)
              (form-update-visibility '("SaveNewProf") #f)
-           ;; Скрываем обычную кнопку и показываем кнопку (1)
+             ;; Скрываем обычную кнопку и показываем кнопку (1)
              (form-update-visibility '("save_as_create") #f)
-             (form-update-visibility '("save_select_data") #t)
-            )
+             (form-update-visibility '("save_select_data") #t))
            ;; Если чекбокс не отмечен - показываем создание нового, скрываем выбор профиля
            (begin
              (form-update-visibility '("profile_selection") #f)
              (form-update-visibility '("SaveNewProf") #t)
-           ;; Показываем обычную кнопку и скрываем кнопку (1)
-             (form-update-visibility '("save_as_create")#t)
+             ;; Показываем обычную кнопку и скрываем кнопку (1)
+             (form-update-visibility '("save_as_create") #t)
              (form-update-visibility '("save_select_data") #f)))))))
 
 ;; Функция для показа формы "Сохранить как" с начальными настройками
@@ -180,13 +199,17 @@
    (lambda()
      ;; Сбрасываем чекбокс
      (form-update-value "checkbox_prof" #f)
+     ;; Сбрасываем выпадающий список
+     (form-update-value "target_profiles" #f)
      ;; Показываем форму создания нового профиля
      (form-update-visibility '("SaveNewProf") #t)
      ;; Скрываем выбор существующего профиля
      (form-update-visibility '("profile_selection") #f)
+     ;; Скрываем кнопку копирования и показываем обычную кнопку
+     (form-update-visibility '("save_select_data") #f)
+     (form-update-visibility '("save_as_create") #t)
      ;; Показываем основную форму
      (form-update-visibility '("saveAsForm") #t))))
-
 
 ;; Функция для сохранения текущего профиля как нового
 (define (ui-save-as-create)
@@ -208,9 +231,6 @@
                (form-update-value "title" (woo-get-option first-host 'title)))))
          ;; Скрываем форму после успешного сохранения
          (ui-hide-save-as))))))
-
-
-
 
 (define (init)
   (catch/message (lambda ()
@@ -247,7 +267,13 @@
           (when (not (null? hosts-data))
             (let ((first-host (car hosts-data)))
               (form-update-value "title" (woo-get-option first-host 'title)))))))))
+
 ;; (ui-init)
+
+;; Добавьте эту привязку для новой кнопки
+(form-bind "save_select_data" "click" ui-copy-to-profile)
+
+;; Остальные привязки остаются без изменений
 (form-bind "profiles" "click" ui-change-profile)
 (form-bind "return" "click" ui-return)
 (form-bind "apply" "click" ui-apply)
@@ -259,13 +285,8 @@
 (form-bind "create_profile" "click" ui-create-profile-ui-hide-add-as)
 (form-bind "save_as" "click" ui-show-save-as-and-hide-add-as)
 (form-bind "cancellation_save" "click" ui-hide-save-as)
-
 (form-bind "cancellation_newprofiles" "click" ui-hide-add-as)
-
 (form-bind "AddNewProf" "click" ui-show-profileform-as-ui-hide-save-as)
-
-
-; (form-bind "checkbox_prof" "change" ui-checkbox-prof-ui-savenewprof)
 (form-bind "checkbox_prof" "change" ui-toggle-checkbox)
 (form-bind "save_as_create" "click" ui-save-as-create)
 )
