@@ -151,19 +151,6 @@
   (ui-hide-add-as)
 )
 
-;;///////////////// форма для "Сохранить как"  //////////////////////////
-; (define (ui-checkbox-prof)
-;   (form-update-visibility '("profile_selection") #t)
-; )
-
-; (define (ui-savenewprof)
-;   (form-update-visibility '("SaveNewProf") #f)
-; )
-
-; (define (ui-checkbox-prof-ui-savenewprof)
-;   (ui-checkbox-prof)
-;   (ui-savenewprof)
-; )
 
 ;;///////////////// форма для "Сохранить как"  //////////////////////////
 (define (ui-toggle-checkbox)
@@ -174,11 +161,18 @@
            ;; Если чекбокс отмечен - показываем выбор профиля, скрываем создание нового
            (begin
              (form-update-visibility '("profile_selection") #t)
-             (form-update-visibility '("SaveNewProf") #f))
+             (form-update-visibility '("SaveNewProf") #f)
+           ;; Скрываем обычную кнопку и показываем кнопку (1)
+             (form-update-visibility '("save_as_create") #f)
+             (form-update-visibility '("save_select_data") #t)
+            )
            ;; Если чекбокс не отмечен - показываем создание нового, скрываем выбор профиля
            (begin
              (form-update-visibility '("profile_selection") #f)
-             (form-update-visibility '("SaveNewProf") #t)))))))
+             (form-update-visibility '("SaveNewProf") #t)
+           ;; Показываем обычную кнопку и скрываем кнопку (1)
+             (form-update-visibility '("save_as_create")#t)
+             (form-update-visibility '("save_select_data") #f)))))))
 
 ;; Функция для показа формы "Сохранить как" с начальными настройками
 (define (ui-show-save-as)
